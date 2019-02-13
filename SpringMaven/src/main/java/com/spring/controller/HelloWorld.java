@@ -20,9 +20,8 @@ public class HelloWorld {
 	@Autowired
 	private HelloWorldService helloWorldService;
 	
-    @RequestMapping(value = "/hello")
+    @RequestMapping(value = "/")
 	public String helloWorld(Model model, HttpSession session, HttpServletRequest req) throws Exception{
-		
 		return "hello";
 	}
     

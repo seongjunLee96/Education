@@ -107,7 +107,7 @@
 		<div>
 			<nav id="topMenu" > 
 				<ul> 
-					<li><a class="menuLink" href="/hello">List</a></li> 
+					<li><a class="menuLink" href="/select">List</a></li> 
 				</ul> 
 			</nav>
 		</div>
@@ -145,6 +145,30 @@
 	
 	<script type="text/javascript">
 	$( document ).ready( function() {
+		
+		$(".menulink").click(function(){
+			$.ajax({
+				type:"POST",
+				url:"/select",
+				data: alldata,
+				dataType:"json",
+				success: function(data){
+					var list = data.hello; 
+	    			if(list.length > 0){
+	    				for(var i=0; i<list.length; i++){
+	    					html += "<tr><td style='width:20px'><input type='checkbox'/></td>"+
+	        						"<td>"+list[i].USER_ID+"</td>"+
+	        					 	"<td><input type='text' value='"+list[i].USER_NAME+"'/></td>"+
+	        						"<td><input type='text' value='"+list[i].USER_DEP+"'/></td>"+
+	        						"<td><input type='text' value='"+list[i].USER_GENDER+"'/></td>"+
+	        						"<td><input type='text' value='"+list[i].USER_AGE+"'/></td>"+	
+	        						"<td><input type='button' value='save' onClick='javascript:onSave(this);'/></td></tr>";
+	    				}
+	    				console.log(list[1]);
+	    				$("#listTable tbody").append(html);
+					}
+				});
+			});
 		
 		$("#search").click(function(){
 			var userId = $("#keyword").val();
