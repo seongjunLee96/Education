@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="SqlHelloWorld">
+
+	<select id="selectUser" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+		SELECT 
+			USER_ID,
+			USER_NAME,
+			USER_DEP,
+			USER_GENDER,
+			USER_AGE
+		FROM TB_USER_SAMPLE
+		WHERE 1=1
+		<if test='KEYWORD != null and KEYWORD != ""'>	
+			AND USER_ID = #{KEYWORD}
+		</if>
+		ORDER BY USER_ID
+	</select>
+	
+	<insert id="createUser" parameterType="java.util.HashMap">
+		INSERT INTO TB_USER_SAMPLE
+		(USER_ID, USER_NAME, USER_DEP, USER_GENDER, USER_AGE)
+		VALUES(#{USER_ID}, #{USER_NAME}, #{USER_DEP}, #{USER_GENDER}, #{USER_AGE})
+	</insert>
+	
+	<update id="updateUser" parameterType="java.util.HashMap">
+		UPDATE TB_USER_SAMPLE
+		SET
+			USER_NAME = #{USER_NAME},
+			USER_DEP = #{USER_DEP},
+			USER_GENDER = #{USER_GENDER},
+			USER_AGE = #{USER_AGE}
+		WHERE USER_ID = #{USER_ID}
+	</update>
+	
+	<delete id="removeUser" parameterType="java.util.HashMap">
+		DELETE FROM TB_USER_SAMPLE
+		WHERE USER_ID = #{USER_ID}
+	</delete>
+	
+</mapper>

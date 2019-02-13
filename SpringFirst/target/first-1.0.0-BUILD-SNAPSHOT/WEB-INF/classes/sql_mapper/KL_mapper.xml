@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kl">
+
+<!-- 글 목록 쿼리 -->
+	
+	<select id="gesipanlist" resultType="kl">
+	 SELECT * FROM RGESIPAN where RTYPE='운동법' ORDER BY RID
+	</select>
+	<select id="gesipanlist2" resultType="kl">
+	 SELECT * FROM RGESIPAN where RTYPE='레시피' ORDER BY RID
+	</select>
+	
+	
+	<!-- 조회수 증가 쿼리 -->
+	<update id="increaseHit" parameterType="int">
+		UPDATE RGESIPAN SET RHIT=RHIT+1 WHERE RID=#{rid}
+	</update>
+	<!-- 부등호 기호를 이용할 때에는 CDATA로 쿼리문 감싸줘야 한다. -->
+	<!-- <![CDATA[쿼리문 ]] -->
+ 
+	<!-- 글 상세보기 쿼리 -->
+	<select id="gesipanview" parameterType="int" resultType="kl">
+		SELECT * FROM RGESIPAN WHERE RID=#{rid}
+	</select>
+	<select id="gesipanview2" parameterType="int" resultType="kl">
+		SELECT * FROM RGESIPAN WHERE RID=#{rid}
+	</select>
+	<!-- 글쓰기 쿼리 -->
+	<insert id="gesipanwrite" parameterType="kl" useGeneratedKeys="true"
+			keyProperty="Rid">
+			INSERT INTO RGESIPAN VALUES(#{rtype},RGESIPAN_SEQ.nextval, #{rname},
+			#{rtitle},#{rcontent},SYSDATE,0,#{rfilename},#{videourl},0)
+			<selectKey keyProperty="Rid" resultType="int" order="AFTER">
+				SELECT RGESIPAN_SEQ.CURRVAL FROM DUAL
+			</selectKey>
+	</insert>
+		<!-- 글 수정업데이트 쿼리 -->
+	<update id="gesipanmodifyer2" parameterType="kl" keyProperty="Rid" >
+	
+		UPDATE RGESIPAN SET RTYPE=#{rtype},RNAME=#{rname},
+		RTITLE=#{rtitle},RCONTENT=#{rcontent},VIDEOURL=#{videourl}
+		WHERE RID=#{rid}
+	
+	</update>
+	<!-- 글 수정업데이트 쿼리 -->
+	<update id="gesipanmodifyer" parameterType="kl" >
+	
+		UPDATE RGESIPAN SET RTYPE=#{rtype},RNAME=#{rname},
+		RTITLE=#{rtitle},RCONTENT=#{rcontent},RFILE=#{rfilename},VIDEOURL=#{videourl}
+		WHERE RID=#{rid}
+	
+	</update>
+	 
+	<!-- 글 삭제하는 쿼리 -->
+	<delete id="gesipandelete" parameterType="int">
+	DELETE FROM RGESIPAN WHERE RID=#{rid}
+	
+	</delete>
+ <!-- 카운트 -->
+   <select id="getListCount" parameterType="int" resultType="int">
+      SELECT COUNT(*) FROM RGESIPAN
+   </select>
+   
+   <!-- 짜르게 -->
+   <select id="getRead" parameterType="kl" resultType="kl">
+      select * from(select RID, rownum as rnum from(select RID from RGESIPAN))r1, RGESIPAN r2 where r1.RID = r2.RID and rnum between #{start} and #{end} order by r2.RDATE
+   </select>
+ 
+</mapper>
