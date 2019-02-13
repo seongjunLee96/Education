@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"       
+       xmlns:aop="http://www.springframework.org/schema/aop"       
+       xmlns:beans="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+				http://www.springframework.org/schema/beans/spring-beans.xsd
+				http://www.springframework.org/schema/context 
+				http://www.springframework.org/schema/context/spring-context.xsd
+				http://www.springframework.org/schema/aop
+				http://www.springframework.org/schema/aop/spring-aop.xsd
+				http://www.springframework.org/schema/tx
+				http://www.springframework.org/schema/tx/spring-tx.xsd				            
+				http://www.springframework.org/schema/mvc
+				http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <mvc:annotation-driven />
+
+    <context:component-scan base-package="com.spring" scoped-proxy="targetClass" >
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>   
+        
+    <bean id="contextProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    	<property name="locations" value="/WEB-INF/config/db.properties" />
+	</bean>        
+	
+    <bean name="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="#{contextProperties.driver}"/>
+        <property name="url" value="#{contextProperties.url}"/>
+        <property name="username" value="#{contextProperties.username}"/>
+        <property name="password" value="#{contextProperties.password}"/>
+        <property name="maxActive" value="150"/>		                        <!-- DB 연결풀의 최대 연결 개수. 0은 무제한이며, MySQL 데몬(mysqld)의 최대 연결개수(max_connections)가 충분한지 확인하라 -->
+        <property name="maxIdle" value="30"/>		                        	<!-- DB 연결풀에서 보관할 최대 유휴(idle) DB 연결 개수. 0은 무제한 -->
+        <property name="maxWait" value="180"/> 	                        		<!-- DB 연결이 반환되는 Timeout 시간이며, 이를 초과하면 예외가 발생한다. 1/1000 초가 단위이며 -1은 무한 대기 -->
+        <property name="logAbandoned" value="false"/>							<!-- 유효하지 않는 커넥션을 생성한 코드 위치 로그생성 여부 -->
+        <property name="removeAbandoned" value="true"/>							<!-- 유효하지 않는 커넥션의 제거 여부 -->
+        <property name="removeAbandonedTimeout" value="60"/>	            	<!-- DBCP가 버려진 연결로 인식할 때까지의 시간을 초단위로 지정할 수 있다. 기본값은 5분(300초)이다. -->
+        <property name="testOnBorrow" value="true" />							<!-- 풀에서 커넥션을 가져올시 커넥션의 유효성 검사 -->
+        <property name="testOnReturn" value="true" />							<!-- 풀에 커넥션을 리턴할 때 커넥션의 유효성 검사 -->
+    </bean>
+      	
+    <beans:bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    	<beans:property name="dataSource" ref="dataSource" />
+        <beans:property name="configLocation" value="/WEB-INF/config/mybatis-config.xml"/>
+        <beans:property name="mapperLocations" value="/WEB-INF/sqlMaps/*.xml" />
+  	</beans:bean>  	
+  	
+    <beans:bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <beans:property name="dataSource" ref="dataSource"/>
+    </beans:bean>
+
+    <aop:config>
+        <aop:pointcut expression="within(@org.springframework.stereotype.Service *)" id="serviceLayer" />
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceLayer" />
+    </aop:config>
+
+    <!-- NativeJdbcExtractor -->
+    <bean id="nativeJdbcExtractor"
+          class="org.springframework.jdbc.support.nativejdbc.CommonsDbcpNativeJdbcExtractor" lazy-init="true"/>
+
+    <!-- Transaction Declare	-->
+    <tx:advice id="txAdvice" transaction-manager="txManager">
+        <tx:attributes>
+            <tx:method name="create*" rollback-for="Exception" propagation="REQUIRED" />
+            <tx:method name="update*" rollback-for="Exception" propagation="REQUIRED" />
+            <tx:method name="remove*" rollback-for="Exception" propagation="REQUIRED" />
+            <tx:method name="*" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>  	
+  	
+  	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+    	<constructor-arg ref="sqlSessionFactory" /> 
+    </bean>
+    
+</beans>
