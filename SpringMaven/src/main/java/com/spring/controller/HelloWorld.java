@@ -23,21 +23,23 @@ public class HelloWorld {
 
 	@RequestMapping(value = "/")
 	public String helloWorld(Model model, HttpSession session, HttpServletRequest req) throws Exception {
-		Map<String, Object> paramMap = new HashMap<String, Object>();
-		paramMap = requestParamMap(req);
-
-		List<Map<String, Object>> list = helloWorldService.selectList(paramMap);
-		String h = "";
-		for (int i = 0; i < list.size(); i++) {
-			h = "<tr><td style='width:20px'><input type='checkbox'/></td>" + "<td>" + list.get(i).get("ID") + "</td>"
-					+ "<td><input type='text' value='" + list.get(i).get("NAME") + "'/></td>"
-					+ "<td><input type='text' value='" + list.get(i).get("AGE") + "'/></td>"
-					+ "<td><input type='text' value='" + list.get(i).get("PHONE_NUM") + "'/></td>"
-					+ "<td><input type='text' value='" + list.get(i).get("EMAIL") + "'/></td>"
-					+ "<td><input type='text' value='" + list.get(i).get("ADDRESS") + "'/></td>"
-					+ "<td><input type='button' value='save' onClick='javascript:onSave(this);'/></td></tr>";
-		}
-		model.addAttribute("h", h);
+		/*
+		 * Map<String, Object> paramMap = new HashMap<String, Object>(); paramMap =
+		 * requestParamMap(req);
+		 * 
+		 * List<Map<String, Object>> list = helloWorldService.selectList(paramMap);
+		 * String h = ""; for (int i = 0; i < list.size(); i++) { h =
+		 * "<tr><td style='width:20px'><input type='checkbox'/></td>" + "<td>" +
+		 * list.get(i).get("ID") + "</td>" + "<td><input type='text' value='" +
+		 * list.get(i).get("NAME") + "'/></td>" + "<td><input type='text' value='" +
+		 * list.get(i).get("AGE") + "'/></td>" + "<td><input type='text' value='" +
+		 * list.get(i).get("PHONE_NUM") + "'/></td>" + "<td><input type='email' value='"
+		 * + list.get(i).get("EMAIL") + "'/></td>" +
+		 * "<td><input type='text' onclick=\"sample2_execDaumPostcode()\" id=\"sample2_address\" placeholder=\"주소\" value='"
+		 * + list.get(i).get("ADDRESS") + "'/></td>" +
+		 * "<td><input type='button' value='save' onClick='javascript:onSave(this);'/></td></tr>"
+		 * ; } model.addAttribute("h", h);
+		 */
 		return "hello";
 	}
 
@@ -52,14 +54,15 @@ public class HelloWorld {
 		 * map.entrySet()) { String key = entry.getKey(); Object value =
 		 * entry.getValue(); System.out.println(key); System.out.println(value); } }
 		 */
+		
 		String h = "";
 		for (int i = 0; i < list.size(); i++) {
 			h = "<tr><td style='width:20px'><input type='checkbox'/></td>" + "<td>" + list.get(i).get("ID") + "</td>"
 					+ "<td><input type='text' value='" + list.get(i).get("NAME") + "'/></td>"
 					+ "<td><input type='text' value='" + list.get(i).get("AGE") + "'/></td>"
 					+ "<td><input type='text' value='" + list.get(i).get("PHONE_NUM") + "'/></td>"
-					+ "<td><input type='text' value='" + list.get(i).get("EMAIL") + "'/></td>"
-					+ "<td><input type='text' value='" + list.get(i).get("ADDRESS") + "'/></td>"
+					+ "<td><input type='email' value='" + list.get(i).get("EMAIL") + "'/></td>"
+					+ "<td><input type='text' onclick=\"sample2_execDaumPostcode()\" id=\"sample2_address\" placeholder=\"주소\" value='" + list.get(i).get("ADDRESS") + "'/></td>"
 					+ "<td><input type='button' value='save' onClick='javascript:onSave(this);'/></td></tr>";
 		}
 
@@ -121,5 +124,23 @@ public class HelloWorld {
 			}
 		}
 		return paramMap;
+	}
+	
+	public void listHtml(Model model, HttpSession session, HttpServletRequest req) throws Exception {
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap = requestParamMap(req);
+
+		List<Map<String, Object>> list = helloWorldService.selectList(paramMap);
+		String h = "";
+		for (int i = 0; i < list.size(); i++) {
+			h = "<tr><td style='width:20px'><input type='checkbox'/></td>" + "<td>" + list.get(i).get("ID") + "</td>"
+					+ "<td><input type='text' value='" + list.get(i).get("NAME") + "'/></td>"
+					+ "<td><input type='text' value='" + list.get(i).get("AGE") + "'/></td>"
+					+ "<td><input type='text' value='" + list.get(i).get("PHONE_NUM") + "'/></td>"
+					+ "<td><input type='email' value='" + list.get(i).get("EMAIL") + "'/></td>"
+					+ "<td><input type='text' onclick=\"sample2_execDaumPostcode()\" id=\"sample2_address\" placeholder=\"주소\" value='" + list.get(i).get("ADDRESS") + "'/></td>"
+					+ "<td><input type='button' value='save' onClick='javascript:onSave(this);'/></td></tr>";
+		}
+		model.addAttribute("h", h);
 	}
 }
