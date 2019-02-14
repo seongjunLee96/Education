@@ -122,7 +122,7 @@ table button {
 		<div>
 			<nav id="topMenu">
 			<ul>
-				<li><a class="menuLink" href="/">List</a></li>
+				<li><a class="menuLink" href="/">HOME</a></li>
 			</ul>
 			</nav>
 		</div>
@@ -137,7 +137,7 @@ table button {
 				<button id="search">Search</button>
 				<button id="add">Add</button>
 				<button id="delete">Delete</button>
-				<button id="seongjun">seongjun</button>
+				<button id="seongjun">list</button>
 			</div>
 			<div>
 				<table id="listTable">
